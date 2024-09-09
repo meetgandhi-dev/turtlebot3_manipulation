@@ -18,8 +18,10 @@
 #define TURTLEBOT3_MANIPULATION_HARDWARE__TURTLEBOT3_MANIPULATION_SYSTEM_HPP_
 
 #include <memory>
+#include <stdbool.h>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/hardware_info.hpp"
@@ -32,6 +34,7 @@
 #include "rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp"
 #include "rclcpp_lifecycle/state.hpp"
 
+#include "dynamixel_sdk/dynamixel_sdk.h"
 #include "turtlebot3_manipulation_hardware/opencr.hpp"
 #include "turtlebot3_manipulation_hardware/visibility_control.h"
 
@@ -72,10 +75,17 @@ public:
     const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
 private:
+  dynamixel::PortHandler *port_handler_;
+  dynamixel::PacketHandler *packet_handler_;
+
+  std::mutex sdk_handler_m_;
   uint8_t id_;
   std::string usb_port_;
   uint32_t baud_rate_;
   uint8_t heartbeat_;
+
+  std::array<uint8_t, 4> joints_id_;
+  uint8_t gripper_id_;
 
   std::array<int32_t, 4> joints_acceleration_;
   std::array<int32_t, 4> joints_velocity_;
@@ -83,7 +93,7 @@ private:
   int32_t gripper_acceleration_;
   int32_t gripper_velocity_;
 
-  std::unique_ptr<OpenCR> opencr_;
+  //std::unique_ptr<OpenCR> opencr_;
 
   std::vector<double> dxl_wheel_commands_;
   std::vector<double> dxl_joint_commands_;
@@ -93,6 +103,18 @@ private:
   std::vector<double> dxl_velocities_;
 
   std::vector<double> opencr_sensor_states_;
+
+  bool ping(uint8_t id);
+  bool enable_torque(uint8_t id, uint8_t enable);
+  bool set_profile_acceleration(uint8_t id, uint32_t val);
+  bool set_profile_velocity(uint8_t id, uint32_t val);
+  bool set_joint_position(uint8_t id, double val);
+  bool set_gripper_position(uint8_t id, double val);
+  bool read_joint_velocity(uint8_t id, double& val);
+  bool read_joint_position(uint8_t id, double& val);
+  bool read_gripper_velocity(uint8_t id, double& val);
+  bool read_gripper_position(uint8_t id, double& val);
+  bool set_gripper_current(uint8_t id);
 };
 }  // namespace turtlebot3_manipulation_hardware
 }  // namespace robotis

@@ -231,8 +231,8 @@ def generate_launch_description():
         robot_state_pub_node,
         joint_state_broadcaster_spawner,
         delay_rviz_after_joint_state_broadcaster_spawner,
-        delay_diff_drive_controller_spawner_after_joint_state_broadcaster_spawner,
-        delay_imu_broadcaster_spawner_after_joint_state_broadcaster_spawner,
+        #delay_diff_drive_controller_spawner_after_joint_state_broadcaster_spawner,
+        #delay_imu_broadcaster_spawner_after_joint_state_broadcaster_spawner,
         delay_arm_controller_spawner_after_joint_state_broadcaster_spawner,
         delay_gripper_controller_spawner_after_joint_state_broadcaster_spawner,
     ]
